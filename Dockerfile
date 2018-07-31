@@ -1,7 +1,7 @@
 FROM alpine:latest AS mpir-build
 LABEL maintainer="Lukas Prediger <lukas.prediger@rwth-aachen.de>"
 
-RUN apk add --update g++ make yasm m4
+RUN apk add --update --no-cache g++ make yasm m4
 
 #RUN addgroup -S scale && adduser -S -G scale scale && mkdir -p /scale && chown scale:scale /scale
 #WORKDIR scale
@@ -17,7 +17,7 @@ FROM alpine:latest AS scale-build
 LABEL maintainer="Lukas Prediger <lukas.prediger@rwth-aachen.de>"
 COPY --from=mpir-build /mpir /usr/local
 
-RUN apk add --update git g++ make libressl-dev bash python
+RUN apk add --update --no-cache git g++ make libressl-dev bash python
 
 RUN git clone https://github.com/KULeuven-COSIC/SCALE-MAMBA.git scale-mamba
 WORKDIR scale-mamba
