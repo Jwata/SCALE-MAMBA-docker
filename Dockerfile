@@ -13,11 +13,22 @@ RUN ./configure --enable-cxx --prefix=/mpir && make
 RUN make check
 RUN make install
 
+
+FROM alpine:latest AS openssl-build
+
+RUN apk add --update --no-cache g++ make linux-headers perl
+RUN wget https://www.openssl.org/source/openssl-1.1.0h.tar.gz && tar -xzf openssl-1.1.0h.tar.gz && rm openssl-1.1.0h.tar.gz
+WORKDIR openssl-1.1.0h
+RUN ./config --prefix=/openssl no-async no-weak-ssl-ciphers && make
+RUN make test
+RUN make install
+
 FROM alpine:latest AS scale-build
 LABEL maintainer="Lukas Prediger <lukas.prediger@rwth-aachen.de>"
 COPY --from=mpir-build /mpir /usr/local
+COPY --from=openssl-build /openssl /usr/local
 
-RUN apk add --update --no-cache git g++ make libressl-dev bash python
+RUN apk add --update --no-cache git g++ make bash python
 
 RUN git clone https://github.com/KULeuven-COSIC/SCALE-MAMBA.git scale-mamba
 WORKDIR scale-mamba

@@ -1,4 +1,5 @@
-ROOT = /scale-mamba/
+ROOT = /scale-mamba
+OSSL = /usr/local
 
 # Debug flags
 #   SH_DEBUG = Share debugging (for development only)
