@@ -26,10 +26,10 @@ LABEL maintainer="Lukas Prediger <lukas.prediger@rwth-aachen.de>"
 COPY --from=mpir-build /mpir /usr/local
 COPY --from=openssl-build /openssl /usr/local
 
-RUN apk add --update --no-cache git g++ make
+RUN apk add --update --no-cache g++ make
 
-RUN git clone https://github.com/KULeuven-COSIC/SCALE-MAMBA.git scale-mamba
-WORKDIR scale-mamba
+WORKDIR /scale-mamba
+ADD SCALE-MAMBA/ .
 ADD CONFIG.mine .
 RUN make progs && make test
 RUN mkdir /scale-mamba-bin && cp Player.x /scale-mamba-bin && cp Setup.x /scale-mamba-bin && cp src/libMPC.a /scale-mamba-bin && cp compile.py /scale-mamba-bin && cp -r Compiler /scale-mamba-bin && cp Copyright.txt /scale-mamba-bin && cp License.txt /scale-mamba-bin
