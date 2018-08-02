@@ -3,15 +3,12 @@ LABEL maintainer="Lukas Prediger <lukas.prediger@rwth-aachen.de>"
 
 RUN apk add --update --no-cache g++ make yasm m4
 
-#RUN addgroup -S scale && adduser -S -G scale scale && mkdir -p /scale && chown scale:scale /scale
-#WORKDIR scale
-#USER scale
-
 RUN wget http://mpir.org/mpir-3.0.0.tar.bz2 && tar -xjf mpir-3.0.0.tar.bz2 && rm mpir-3.0.0.tar.bz2
 WORKDIR  mpir-3.0.0
 RUN ./configure --enable-cxx --prefix=/mpir && make
 RUN make check
 RUN make install
+RUN rm -rf /mpir/share
 
 
 FROM alpine:latest AS openssl-build
@@ -22,22 +19,31 @@ WORKDIR openssl-1.1.0h
 RUN ./config --prefix=/openssl no-async no-weak-ssl-ciphers && make
 RUN make test
 RUN make install
+RUN rm -rf /openssl/share
 
 FROM alpine:latest AS scale-build
 LABEL maintainer="Lukas Prediger <lukas.prediger@rwth-aachen.de>"
 COPY --from=mpir-build /mpir /usr/local
 COPY --from=openssl-build /openssl /usr/local
 
-RUN apk add --update --no-cache git g++ make bash python
+RUN apk add --update --no-cache git g++ make
 
 RUN git clone https://github.com/KULeuven-COSIC/SCALE-MAMBA.git scale-mamba
 WORKDIR scale-mamba
 ADD CONFIG.mine .
-RUN make progs
-RUN make test
-#RUN ./run_tests.sh
+RUN make progs && make test
+RUN mkdir /scale-mamba-bin && cp Player.x /scale-mamba-bin && cp Setup.x /scale-mamba-bin && cp src/libMPC.a /scale-mamba-bin && cp compile.py /scale-mamba-bin && cp -r Compiler /scale-mamba-bin && cp Copyright.txt /scale-mamba-bin && cp License.txt /scale-mamba-bin
 
-#FROM alpine:latest
-#LABEL maintainer="Lukas Prediger <lukas.prediger@rwth-aachen.de>"
-#COPY --from=mpir-build /mpir /usr/local/
-#ENTRYPOINT ["/bin/sh"]
+FROM alpine:latest
+LABEL maintainer="Lukas Prediger <lukas.prediger@rwth-aachen.de>"
+
+RUN apk add --update --no-cache libgcc libstdc++ python
+
+COPY --from=mpir-build /mpir /usr/local
+COPY --from=openssl-build /openssl /usr/local
+COPY --from=scale-build /scale-mamba-bin /scale-mamba
+
+VOLUME ["/scale-mamba/Cert-Store", "/scale-mamba/Data", "/scale-mamba/Programs"]
+
+WORKDIR /scale-mamba
+ENTRYPOINT ["/bin/sh"]
