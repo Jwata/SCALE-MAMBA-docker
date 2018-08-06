@@ -31,7 +31,7 @@ RUN apk add --update --no-cache g++ make
 WORKDIR /scale-mamba
 ADD SCALE-MAMBA/ .
 ADD CONFIG.mine .
-RUN make progs && make test
+RUN make progs
 RUN mkdir /scale-mamba-bin && cp Player.x /scale-mamba-bin && cp Setup.x /scale-mamba-bin && cp src/libMPC.a /scale-mamba-bin && cp compile.py /scale-mamba-bin && cp -r Compiler /scale-mamba-bin && cp Copyright.txt /scale-mamba-bin && cp License.txt /scale-mamba-bin
 
 FROM alpine:latest
@@ -46,4 +46,4 @@ COPY --from=scale-build /scale-mamba-bin /scale-mamba
 VOLUME ["/scale-mamba/Cert-Store", "/scale-mamba/Data", "/scale-mamba/Programs"]
 
 WORKDIR /scale-mamba
-ENTRYPOINT ["/bin/sh"]
+CMD ["/bin/sh"]
