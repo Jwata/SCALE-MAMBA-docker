@@ -32,7 +32,7 @@ WORKDIR /scale-mamba
 ADD SCALE-MAMBA/ .
 ADD CONFIG.mine .
 RUN make progs
-RUN mkdir /scale-mamba-bin && cp Player.x /scale-mamba-bin && cp Setup.x /scale-mamba-bin && cp src/libMPC.a /scale-mamba-bin && cp compile.py /scale-mamba-bin && cp -r Compiler /scale-mamba-bin && cp Copyright.txt /scale-mamba-bin && cp License.txt /scale-mamba-bin
+RUN mkdir /scale-mamba-bin && cp Player.x /scale-mamba-bin && cp Setup.x /scale-mamba-bin && cp libMPC.so /scale-mamba-bin && cp compile.py /scale-mamba-bin && cp -r Compiler /scale-mamba-bin && cp Copyright.txt /scale-mamba-bin && cp License.txt /scale-mamba-bin
 
 FROM alpine:latest
 LABEL maintainer="Lukas Prediger <lukas.prediger@rwth-aachen.de>"

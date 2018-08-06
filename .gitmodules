@@ -1,4 +1,4 @@
 [submodule "SCALE-MAMBA"]
 	path = SCALE-MAMBA
 	url = https://github.com/lumip/SCALE-MAMBA.git
-	branch = docker_test_scripts
+	branch = docker_master
