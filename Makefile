@@ -3,8 +3,12 @@ VOLUMES?=-v $(DOCKERPRE)-programs:/scale-mamba/Programs -v $(DOCKERPRE)-certs:/s
 CONTAINER?=lumip/scale-mamba
 TAG?=latest
 TEST=
+REPO = SCALE-MAMBA/.git
 
-container: Dockerfile
+$(REPO):
+	git submodule update --init $(@D)
+
+container: Dockerfile $(REPO)
 	docker build -t $(CONTAINER):$(TAG) -f Dockerfile .
 
 doc:
